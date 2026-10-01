@@ -1,0 +1,18 @@
+﻿@using mvc.ViewModel
+@model PersonVM
+
+
+
+<ul> 
+    @foreach(var item in Model.persons)
+    {
+       <li> Id : @item.id</li>
+       <li> Name : @item.name</li>
+       <li> Salary : @item.salary</li>
+       <br> <br>
+    }
+  <h2> the count is @Model.count</h2>
+
+
+
+</ul>

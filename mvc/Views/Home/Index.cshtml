@@ -1,0 +1,150 @@
+﻿@model List<Product>
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+
+   <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Shop in style</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+                </div>
+            </div>
+        </header>
+
+<div class="container my-4">
+    <form asp-action="Index" method="get" class="card shadow-sm p-4 bg-light">
+        <div class="row g-3 align-items-center">
+
+            <!-- بحث بالاسم -->
+            <div class="col-md-3">
+                <input type="text" name="ProductName" class="form-control" placeholder="Product Name" value="@Context.Request.Query["ProductName"]" />
+            </div>
+
+            <!-- أقل سعر -->
+            <div class="col-md-2">
+                <input type="number" name="MinPrice" class="form-control" placeholder="Min Price" value="@Context.Request.Query["MinPrice"]" />
+            </div>
+
+            <!-- أعلى سعر -->
+            <div class="col-md-2">
+                <input type="number" name="MaxPrice" class="form-control" placeholder="Max Price" value="@Context.Request.Query["MaxPrice"]" />
+            </div>
+
+           
+            <!-- قائمة الأقسام (Categories) -->
+            <div class="col-md-2">
+                <select name="CategoryId" class="form-select">
+                    <option value="">--Select Category--</option>
+                    @foreach(var item in ViewBag.Categories)
+                    {
+                        <option value="@item.Id">  @item.Name</option>
+                    }
+                    
+                </select>
+            </div>
+
+            <!-- قائمة الماركات (Brands) -->
+            <div class="col-md-2">
+                <select name="BrandId" class="form-select">
+                    <option value="">--Select Brand--</option>
+                    @foreach (var item in ViewBag.Brands)
+                    {
+                        <option value="@item.Id">  @item.Name</option>
+                    }
+                </select>
+            </div>
+
+            <!-- فلاتر إضافية (Hot Checkbox) -->
+            <div class="col-md-1 d-flex align-items-center">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="IsHot" value="true" id="hotCheck"  />
+                    <label class="form-check-label" for="hotCheck">Hot</label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- زر الفلترة -->
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-dark px-4">Filter</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Reset</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    
+            @foreach(var item in Model)
+            {
+                
+            <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        @if (item.Discount > 35)
+                        {
+                            
+                            <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; left: 0.5rem">@item.Discount %</div>
+                        }
+
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">@item.Name</h5>
+                                    <!-- Product price-->
+                                    <span class="text-muted text-decoration-line-through">@item.price</span>
+                                @((item.price - item.price * item.Discount / 100))
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                            </div>
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View</a></div>
+                            </div>
+                        </div>
+                    </div>
+            }
+                   
+                </div>
+            </div>
+    <nav aria-label="Page navigation example" class="d-flex justify-content-center align-items-center">
+        <ul class="pagination">
+            <li class="page-item" @(ViewBag.CurrentPage == 1 ? "disabled" : "")>
+                <a class="page-link" href="/Home/Index?page=@(ViewBag.CurrentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @for(var i = 1; i <= ViewBag.TotalPages; i++)
+             {
+
+                <li class="page-item"><a class="page-link" href="/Home/Index?page=@i">@i</a></li>
+             }
+           
+            <li class="page-item" @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")>
+                <a class="page-link" href="/Home/Index?page=@(ViewBag.CurrentPage + 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+        </section>
