@@ -6,7 +6,7 @@ namespace mvc.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public bool Status { get; set; }
         public string MainImg { get; set; }
         public decimal price { get; set; }

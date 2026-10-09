@@ -25,10 +25,14 @@ namespace mvc
             app.UseAuthorization();
 
             app.MapStaticAssets();
+
+            app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
+                pattern: "{area=Admin}/{controller=Brand}/{action=Index}/{id?}");
 
             app.Run();
         }

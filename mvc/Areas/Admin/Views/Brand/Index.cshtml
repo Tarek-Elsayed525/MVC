@@ -1,0 +1,99 @@
+﻿@model IEnumerable<mvc.Models.Brand>
+
+@{
+    ViewData["Title"] = "All Brands";
+}
+
+<div class="container my-4">
+    <!-- رأس الصفحة وزر الإنشاء -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-secondary">All Brands</h2>
+        <a asp-action="Create" class="btn btn-success px-4 shadow-sm">
+            <i class="fas fa-plus me-1"></i> Create New
+        </a>
+    </div>
+
+    <!-- جدول عرض الفئات -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="py-3 ps-4">#</th>
+                        <th scope="col" class="py-3">Name</th>
+                        <th scope="col" class="py-3">Status</th>
+                        <th scope="col" class="py-3 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        int index = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">@index</td>
+                                <td class="fw-semibold">@item.Name</td>
+                               
+                                <td>
+                                    @if (item.Status)
+                                    {
+                                        <span class="badge bg-success px-3 py-2">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger px-3 py-2">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <!-- زر التعديل -->
+                                    <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-warning btn-sm text-white px-3 fw-semibold me-1 shadow-sm">
+                                        Edit
+                                    </a>
+
+                                    <!-- زر الحذف المرتبط بـ SweetAlert2 -->
+                                    <button type="button" class="btn btn-danger btn-sm px-3 fw-semibold shadow-sm" onclick="confirmDelete('@Url.Action("Delete", new { id = item.Id })')">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">No brands found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+    <!-- استدعاء مكتبة SweetAlert2 من الـ CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // دالة عرض رسالة التحذير الجذابة عند الضغط على الحذف
+        function confirmDelete(deleteUrl) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // إذا وافق المستخدم، يتم توجيهه لرابط الحذف في الكنترولر
+                    window.location.href = deleteUrl;
+                }
+            });
+        }
+    </script>
+

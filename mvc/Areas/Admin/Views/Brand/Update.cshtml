@@ -1,0 +1,85 @@
+﻿@model mvc.Models.Brand
+
+@{
+    ViewData["Title"] = "Update Brand";
+}
+
+<div class="container my-4" style="max-width: 900px;">
+    <h2 class="fw-normal mb-4 text-secondary">Update Brand</h2>
+
+    <form asp-action="Update" method="post" enctype="multipart/form-data">
+        <!-- مهم جداً: تمرير الـ ID مخفياً عشان الـ Controller يعرف العنصر المراد تعديله -->
+        <input type="hidden" asp-for="Id" />
+
+        <!-- حقل الاسم -->
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label text-secondary">Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <!-- حقل الصوره -->
+        <div class="mb-3">
+            <label asp-for="Logo" class="form-label text-secondary">Logo</label>
+            <input asp-for="Logo" type="file" class="form-control" name="ImageFile" onchange="previewImage(event)" />
+            <span asp-validation-for="Logo" class="text-danger"></span>
+        </div>
+
+        <!-- معاينة الصورة -->
+        <div class="mb-3">
+            <label class="form-label text-secondary">Image Preview</label>
+            <div>
+                <img id="preview" 
+                     src="@Url.Content("~/Admin/img/" + Model.Logo)" 
+                     alt="Current Image" 
+                     style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
+            </div>
+        </div>
+
+        <!-- حقل الوصف -->
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label text-secondary">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="4">@Model.Description</textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <!-- حقل الحالة -->
+        <div class="mb-4">
+            <label asp-for="Status" class="form-label text-secondary">Status</label>
+            <select asp-for="Status" class="form-select">
+                @if (Model.Status == true)
+                {
+                    <option value="true" selected>Active</option>
+                    <option value="false">Inactive</option>
+                }
+                else
+                {
+                    <option value="true">Active</option>
+                    <option value="false" selected>Inactive</option>
+                }
+            </select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+
+        <!-- زر الحفظ -->
+        <div>
+            <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+<!-- السكريبت محطوط مباشرة بدون أي Sections لتجنب أي أخطاء -->
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById("preview");
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result; // عرض الصورة الجديدة فوراً
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

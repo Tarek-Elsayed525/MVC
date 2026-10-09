@@ -3,8 +3,9 @@ using mvc.Data;
 using mvc.Models;
 using mvc.ViewModel;
 using System.Diagnostics;
-namespace mvc.Controllers
+namespace mvc.Areas.Customers.Controllers
 {
+    [Area("Customers")]
     public class HomeController : Controller
     {
         private readonly ApplicationDBContext _context = new ApplicationDBContext();
