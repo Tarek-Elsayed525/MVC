@@ -1,0 +1,202 @@
+﻿@model IEnumerable<mvc.Models.Product>
+
+@{
+    ViewData["Title"] = "All Products";
+}
+
+<div class="container-fluid px-4">
+    <!-- رأس الصفحة وزر الإنشاء -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-secondary">All Products</h2>
+        <a asp-action="Create" class="btn btn-success px-4 shadow-sm">
+            <i class="fas fa-plus me-1"></i> Create New
+        </a>
+    </div>
+
+    <!-- كارد الفلترة والبحث -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="get" asp-action="Index">
+                <div class="row g-3 align-items-center">
+                    <!-- بحث بالاسم -->
+                    <div class="col-md-3">
+                        <input type="text" name="ProductName" class="form-control" placeholder="Product Name" value="@Context.Request.Query["ProductName"]" />
+                    </div>
+
+                    <!-- أقل سعر -->
+                    <div class="col-md-2">
+                        <input type="number" name="MinPrice" class="form-control" placeholder="Min Price" value="@Context.Request.Query["MinPrice"]" />
+                    </div>
+
+                    <!-- أعلى سعر -->
+                    <div class="col-md-2">
+                        <input type="number" name="MaxPrice" class="form-control" placeholder="Max Price" value="@Context.Request.Query["MaxPrice"]" />
+                    </div>
+
+                    <!-- قائمة الأقسام (Categories) -->
+                    <div class="col-md-2">
+                        <select name="CategoryId" class="form-select">
+                            <option value="">--Select Category--</option>
+                            @if (ViewBag.Categories != null)
+                            {
+                                @foreach (var item in ViewBag.Categories)
+                                {
+                                    bool isSelected = Context.Request.Query["CategoryId"] == item.Id.ToString();
+                                    <option value="@item.Id" selected="@isSelected">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- قائمة الماركات (Brands) -->
+                    <div class="col-md-2">
+                        <select name="BrandId" class="form-select">
+                            <option value="">--Select Brand--</option>
+                            @if (ViewBag.Brands != null)
+                            {
+                                @foreach (var item in ViewBag.Brands)
+                                {
+                                    bool isSelected = Context.Request.Query["BrandId"] == item.Id.ToString();
+                                    <option value="@item.Id" selected="@isSelected">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- فلاتر إضافية (Hot Checkbox) -->
+                   
+<div class="col-md-1 d-flex align-items-center">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="IsHot" value="true" id="hotCheck" 
+               @(Context.Request.Query["IsHot"] == "true" ? "checked" : "") />
+        <label class="form-check-label" for="hotCheck">Hot</label>
+    </div>
+</div>
+
+                <!-- أزرار الفلترة والـ Reset -->
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-dark px-4">Filter</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Reset</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- جدول عرض المنتجات -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="py-3 ps-4">#</th>
+                            <th scope="col" class="py-3">Name</th>
+                            <th scope="col" class="py-3">Status</th>
+                            <th scope="col" class="py-3">Brand Name</th>
+                            <th scope="col" class="py-3">Price</th>
+                            <th scope="col" class="py-3">Discount</th>
+                            <th scope="col" class="py-3">Quantity</th>
+                            <th scope="col" class="py-3">Category Name</th>
+                            <th scope="col" class="py-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            int index = 1;
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-muted">@index</td>
+                                    <td class="fw-semibold">@item.Name</td>
+                                    <td>
+                                        @if (item.Status)
+                                        {
+                                            <span class="badge bg-success px-3 py-2">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger px-3 py-2">Inactive</span>
+                                        }
+                                    </td>
+                                    <td class="fw-semibold">@(item.Brand?.Name ?? "N/A")</td>
+                                    <td class="fw-semibold">@item.price</td>
+                                    <td class="fw-semibold">@item.Discount</td>
+                                    <td class="fw-semibold @(item.Quantity <= 55 ? "text-danger" : "")">@item.Quantity</td>
+                                    <td class="fw-semibold">@(item.Category?.Name ?? "N/A")</td>
+                                    <td class="text-center">
+                                        <!-- زر التعديل -->
+                                        <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-warning btn-sm text-white px-3 fw-semibold me-1 shadow-sm">
+                                            Edit
+                                        </a>
+
+                                        <!-- زر الحذف المرتبط بـ SweetAlert2 -->
+                                        <button type="button" class="btn btn-danger btn-sm px-3 fw-semibold shadow-sm" onclick="confirmDelete('@Url.Action("Delete", new { id = item.Id })')">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-4 text-muted">No products found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- الترقيم (Pagination) -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="d-flex justify-content-center align-items-center mt-4">
+            <ul class="pagination">
+                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                @for (var i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
+
+<!-- استدعاء مكتبة SweetAlert2 من الـ CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // دالة عرض رسالة التحذير الجذابة عند الضغط على الحذف
+    function confirmDelete(deleteUrl) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = deleteUrl;
+            }
+        });
+    }
+</script>

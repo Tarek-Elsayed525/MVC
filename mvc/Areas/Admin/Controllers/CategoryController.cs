@@ -17,14 +17,20 @@ namespace mvc.Areas.Admin.Controllers
         public IActionResult Create()
         {
 
-            return View();
+            return View(new Category());
         }
         [HttpPost]
         public IActionResult Create(Category category)
 
         {
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Please correct the errors and try again.";
+                return View(category);
+            }
             _context.Categories.Add(category);
             _context.SaveChanges();
+            TempData["success"] = "Category created successfully.";
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]

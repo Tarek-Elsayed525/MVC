@@ -7,14 +7,14 @@
 <div class="container my-4" style="max-width: 900px;">
     <!-- عنوان الصفحة -->
     <h2 class="fw-normal mb-4 text-secondary">Create new Category</h2>
-
     <form asp-action="Create" method="post">
         <!-- حقل الاسم -->
         <div class="mb-3">
             <label asp-for="Name" class="form-label text-secondary">Name</label>
-            <input asp-for="Name" class="form-control" placeholder="" name="Name"/>
+            <input asp-for="Name" class="form-control" placeholder="" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
+           
 
         <!-- حقل الوصف -->
         <div class="mb-3">
@@ -39,4 +39,14 @@
         </div>
     </form>
 </div>
+
+
+
+
+
+
+@section Scripts {
+    <partial name="_NotificationPartial" />
+    <partial name="_ValidationScriptsPartial" />
+    }
 
